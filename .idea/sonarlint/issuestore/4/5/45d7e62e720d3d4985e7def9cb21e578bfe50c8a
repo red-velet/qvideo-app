@@ -1,0 +1,10 @@
+
+@	java:S106"+Replace this use of System.out by a logger.(±·°ì
+]	java:S1255"<This block of commented-out lines of code should be removed.(×àâºúÿÿÿÿ8¡ŒØ1
+V	java:S125<"<This block of commented-out lines of code should be removed.(ƒ‰ïýüÿÿÿÿ
+\
+java:S1075Q"ARefactor your code to get this URI from a customizable parameter.(Ô®×•üÿÿÿÿ
+V	java:S125S"<This block of commented-out lines of code should be removed.(ã¢ýÿÿÿÿ
+V	java:S125a"<This block of commented-out lines of code should be removed.(å¤Ù»úÿÿÿÿ
+Q	java:S125w"<This block of commented-out lines of code should be removed.(Û‡õŸ
+W	java:S125…"<This block of commented-out lines of code should be removed.(ø·ç×ûÿÿÿÿ
