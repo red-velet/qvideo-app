@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +35,6 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/userInfo")
 public class UserController extends BaseInfoProperties {
 
@@ -118,6 +118,7 @@ public class UserController extends BaseInfoProperties {
      * @return 修改结果
      */
     @PostMapping("/modifyImage")
+    @Transactional
     public R modifyImage(@RequestParam String userId,
                          @RequestParam Integer type,
                          MultipartFile file) throws Exception {

@@ -1,6 +1,7 @@
 package icu.chiou.qvideo.config;
 
 import icu.chiou.qvideo.exception.PassportException;
+import icu.chiou.qvideo.exception.UnAuthorizeException;
 import icu.chiou.qvideo.exception.UserException;
 import icu.chiou.qvideo.utils.R;
 import lombok.extern.slf4j.Slf4j;
@@ -68,4 +69,14 @@ public class ExceptionController {
 //        log.error("code:{} msg:{}", 500, e.getMessage());
 //        return R.error().msg("请上传大小2MB大小的图片");
 //    }
+
+    /**
+     * 未认证异常
+     */
+    @ExceptionHandler(UnAuthorizeException.class)
+    public R exception(UnAuthorizeException e) {
+        // 收集数据校验失败后的信息
+        return R.error().status(e.getStatus()).msg(e.getMsg()).data(null);
+    }
+
 }

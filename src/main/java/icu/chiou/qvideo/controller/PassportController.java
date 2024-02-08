@@ -32,7 +32,6 @@ import java.util.UUID;
  */
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("passport")
 public class PassportController extends BaseInfoProperties {
     @Autowired
@@ -89,7 +88,7 @@ public class PassportController extends BaseInfoProperties {
         BeanUtils.copyProperties(user, userVO);
         String token = UUID.randomUUID().toString();
         userVO.setUserToken(token);
-        redisService.set(TOKEN + ":" + user.getId(), token);
+        redisService.set(TOKEN + user.getId(), token);
 
         // 4. 用户登录注册成功以后，删除redis中的短信验证码
         redisService.del(CODE_MOBILE + ":" + registerLoginBO.getMobile());
@@ -105,7 +104,7 @@ public class PassportController extends BaseInfoProperties {
     @PostMapping("/logout")
     public R logout(String userId) {
         //清除保存用户会话信息
-        redisService.del(TOKEN + ":" + userId);
+        redisService.del(TOKEN + userId);
         return R.ok().msg("登出成功");
     }
 }
