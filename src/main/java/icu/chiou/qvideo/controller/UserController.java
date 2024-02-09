@@ -2,8 +2,8 @@ package icu.chiou.qvideo.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import icu.chiou.qvideo.constants.BaseInfoProperties;
 import icu.chiou.qvideo.constants.FileTypeEnum;
+import icu.chiou.qvideo.constants.RedisPrefix;
 import icu.chiou.qvideo.constants.ResponseStatusEnum;
 import icu.chiou.qvideo.constants.UserInfoModifyEnum;
 import icu.chiou.qvideo.entity.UpdatedUserBO;
@@ -36,7 +36,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequestMapping("/userInfo")
-public class UserController extends BaseInfoProperties {
+public class UserController {
 
     @Autowired
     UserService userService;
@@ -58,11 +58,11 @@ public class UserController extends BaseInfoProperties {
         BeanUtils.copyProperties(userInfo, userVO);
 
         // 我的关注博主总数量
-        String myFollowsCountsStr = redisService.get(MY_FOLLOW_COUNT + userId);
+        String myFollowsCountsStr = redisService.get(RedisPrefix.MY_FOLLOW_COUNT + userId);
         // 我的粉丝总数
-        String myFansCountsStr = redisService.get(MY_FANS_COUNT + ":" + userId);
+        String myFansCountsStr = redisService.get(RedisPrefix.MY_FANS_COUNT + ":" + userId);
         // 用户获赞总数，视频博主（点赞/喜欢）总和
-        String allCountsStr = redisService.get(ALL_COUNT + ":" + userId);
+        String allCountsStr = redisService.get(RedisPrefix.ALL_COUNT + ":" + userId);
 
         Integer myFollowsCounts = 0;
         Integer myFansCounts = 0;
@@ -143,7 +143,11 @@ public class UserController extends BaseInfoProperties {
         //修改数据库信息
         UpdatedUserBO updatedUserBO = new UpdatedUserBO();
         updatedUserBO.setId(userId);
-        updatedUserBO.setFace(fileUrl);
+        if (Objects.equals(type, FileTypeEnum.BGIMG.type)) {
+            updatedUserBO.setBgImg(fileUrl);
+        } else if (Objects.equals(type, FileTypeEnum.FACE.type)) {
+            updatedUserBO.setFace(fileUrl);
+        }
         User user = userService.updateUserInfo(updatedUserBO, type);
         log.error("上传成功");
         return R.ok().data(user);

@@ -8,12 +8,13 @@ import org.springframework.web.filter.CorsFilter;
 
 /**
  * <p>
- *
+ * 全局跨域配置：网页调试开启
  * </p>
  *
  * @author red-velvet
  * @since 2024/2/8
  */
+@Deprecated
 @Configuration
 public class GlobalCorsConfig {
     @Bean

@@ -14,9 +14,18 @@ import icu.chiou.qvideo.entity.User;
  */
 public interface UserService extends IService<User> {
 
+    /**
+     * 用户登录
+     */
     User login(String mobile);
 
+    /**
+     * 用户注册
+     */
     User register(String mobile);
 
+    /**
+     * 修改用户信息
+     */
     User updateUserInfo(UpdatedUserBO updatedUserBO, Integer type);
 }

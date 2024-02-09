@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * <p>
- *
+ * Web-MVC全局拦截器配置
  * </p>
  *
  * @author red-velvet
@@ -27,6 +27,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         return new UserTokenInterceptor();
     }
 
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 添加拦截器，并指定拦截路径为 "/passport/getSMSCode"
@@ -36,5 +37,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(userTokenInterceptor())
                 .addPathPatterns("/userInfo/modifyUserInfo")
                 .addPathPatterns("/userInfo/modifyImage");
+
     }
 }

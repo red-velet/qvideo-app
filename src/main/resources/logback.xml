@@ -9,7 +9,7 @@
     </appender>
 
     <!-- 自定义的日志级别设置 -->
-    <logger name="icu.chiou.qvideo" level="debug" additivity="false">
+    <logger name="icu.chiou.qvideo" level="info" additivity="false">
         <appender-ref ref="console"/>
     </logger>
 

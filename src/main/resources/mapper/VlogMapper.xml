@@ -1,5 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="icu.chiou.qvideo.mapper.VlogMapper">
+    <select id="getVideoList" resultType="icu.chiou.qvideo.entity.VlogVO">
+        SELECT
+        v.id as vlogId,
+        v.vloger_id as vlogerId,
+        u.face as vlogerFace,
+        u.nickname as vlogerName,
+        v.title as content,
+        v.url as url,
+        v.cover as cover,
+        v.width as width,
+        v.height as height,
+        v.like_counts as likeCounts,
+        v.comments_counts as commentsCounts,
+        v.is_private as isPrivate
+        FROM
+        vlog v
+        LEFT JOIN
+        user u
+        ON
+        v.vloger_id = u.id
+        WHERE
+        v.is_private = 0
+        <if test="paramMap.search != null and paramMap.search != ''">
+            AND v.title like concat('%',#{paramMap.search},'%')
+        </if>
+        ORDER BY
+        v.created_time
+        DESC
+    </select>
 
+    <select id="queryVlogDetail" resultType="icu.chiou.qvideo.entity.VlogVO">
+        SELECT
+        v.id as vlogId,
+        v.vloger_id as vlogerId,
+        u.face as vlogerFace,
+        u.nickname as vlogerName,
+        v.title as content,
+        v.url as url,
+        v.cover as cover,
+        v.width as width,
+        v.height as height,
+        v.like_counts as likeCounts,
+        v.comments_counts as commentsCounts,
+        v.is_private as isPrivate
+        FROM
+        vlog v
+        LEFT JOIN
+        user u
+        ON
+        v.vloger_id = u.id
+        <where>
+            <if test="paramMap.vlogId != null and paramMap.vlogId != ''">
+                AND v.id = #{paramMap.vlogId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateVlogById" parameterType="icu.chiou.qvideo.entity.Vlog">
+        update vlog
+        <set>
+            <!-- 使用动态 SQL 标签 <if> 根据条件拼接更新字段 -->
+            <if test="vlog.url != null and vlog.url != ''">
+                url = #{vlog.url},
+            </if>
+            <if test="vlog.cover != null and vlog.cover != ''">
+                cover = #{vlog.cover},
+            </if>
+            <if test="vlog.title != null and vlog.title != ''">
+                title = #{vlog.title},
+            </if>
+            <if test="vlog.width != null and vlog.width != ''">
+                width = #{vlog.width},
+            </if>
+            <if test="vlog.height != null and vlog.heigh != ''">
+                height = #{vlog.height},
+            </if>
+            <if test="vlog.likeCounts != null">
+                like_counts = #{vlog.likeCounts},
+            </if>
+            <if test="vlog.commentsCounts != null">
+                comments_counts = #{vlog.commentsCounts},
+            </if>
+            <if test="vlog.isPrivate != null">
+                is_private = #{vlog.isPrivate},
+            </if>
+        </set>
+        <where>
+            <if test="vlog.id != null and vlog.id != ''">
+                AND id = #{vlog.id}
+            </if>
+            <if test="vlog.vlogerId != null and vlog.vlogerId != ''">
+                AND vloger_id = #{vlog.vlogerId}
+            </if>
+        </where>
+    </update>
 </mapper>

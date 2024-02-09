@@ -9,7 +9,6 @@ import icu.chiou.qvideo.entity.User;
 import icu.chiou.qvideo.exception.UserException;
 import icu.chiou.qvideo.mapper.UserMapper;
 import icu.chiou.qvideo.service.UserService;
-import icu.chiou.qvideo.utils.DateUtils;
 import icu.chiou.qvideo.utils.IDGeneratorUtils;
 import icu.chiou.qvideo.utils.RedisService;
 import org.springframework.beans.BeanUtils;
@@ -82,17 +81,22 @@ public class UsersServiceImpl extends ServiceImpl<UserMapper, User> implements U
                 throw new UserException(ResponseStatusEnum.NICKNAME_HAS_EXIST.status(), ResponseStatusEnum.NICKNAME_HAS_EXIST.msg());
             }
         } else if (Objects.equals(type, UserInfoModifyEnum.IMOOCNUM.type)) {
-            //个性号是否已被使用
-            int count = userService.count(new QueryWrapper<User>().eq("imooc_num", updatedUserBO.getImoocNum()));
-            if (count >= 1) {
-                throw new UserException(ResponseStatusEnum.IMOOCNUM_HAS_EXIST.status(), ResponseStatusEnum.IMOOCNUM_HAS_EXIST.msg());
+            //是否可以修改个性号
+            int flag = userService.count(new QueryWrapper<User>().eq("can_imooc_num_be_updated", updatedUserBO.getImoocNum()));
+            if (flag == 0) {
+                throw new UserException(ResponseStatusEnum.USER_INFO_CANT_UPDATED_IMOOCNUM_ERROR.status(), ResponseStatusEnum.USER_INFO_CANT_UPDATED_IMOOCNUM_ERROR.msg());
+            } else {
+                //个性号是否已被使用
+                int count = userService.count(new QueryWrapper<User>().eq("imooc_num", updatedUserBO.getImoocNum()));
+                if (count >= 1) {
+                    throw new UserException(ResponseStatusEnum.IMOOCNUM_HAS_EXIST.status(), ResponseStatusEnum.IMOOCNUM_HAS_EXIST.msg());
+                }
+                updatedUserBO.setCanImoocNumBeUpdated(0);
             }
+
         }
         BeanUtils.copyProperties(updatedUserBO, user);
-        if (Objects.equals(type, UserInfoModifyEnum.BIRTHDAY.type)) {
-            Date date = DateUtils.get(updatedUserBO.getBirthday());
-            user.setBirthday(date);
-        }
+
         userMapper.updateById(user);
         return userMapper.selectById(user.getId());
     }

@@ -1,6 +1,6 @@
 package icu.chiou.qvideo.interceptor;
 
-import icu.chiou.qvideo.constants.BaseInfoProperties;
+import icu.chiou.qvideo.constants.RedisPrefix;
 import icu.chiou.qvideo.constants.ResponseStatusEnum;
 import icu.chiou.qvideo.exception.UnAuthorizeException;
 import icu.chiou.qvideo.utils.RedisService;
@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * <p>
- * 用户会话信息拦截器：控制用户登录机器数目
+ * 用户会话信息拦截器
  * </p>
  *
  * @author red-velvet
@@ -26,7 +26,7 @@ import java.util.Map;
  */
 
 @Slf4j
-public class UserTokenInterceptor extends BaseInfoProperties implements HandlerInterceptor {
+public class UserTokenInterceptor implements HandlerInterceptor {
 
     @Autowired
     RedisService redisService;
@@ -36,18 +36,18 @@ public class UserTokenInterceptor extends BaseInfoProperties implements HandlerI
         //校验用户是否认证
         String userId = request.getHeader("headerUserId");
         String userToken = request.getHeader("headerUserToken");
-        log.debug("用户令牌拦截器:{} {}", userId, userToken);
 
-        String storeToken = redisService.get(TOKEN + userId);
+        String storeToken = redisService.get(RedisPrefix.TOKEN + userId);
         if (StringUtils.isBlank(storeToken)) {
-            log.debug("用户令牌拦截器:{}", "用户未登录");
+            log.debug("UserTokenInterceptor: id={} token={} state={}", userId, userToken, "未登录");
             throw new UnAuthorizeException(ResponseStatusEnum.UN_LOGIN.status(), "请先进行登录再操作");
         } else {
             if (!storeToken.equals(userToken)) {
-                log.debug("用户令牌拦截器:{}", "用户会话已过期");
+                log.debug("UserTokenInterceptor: id={} token={} state={}", userId, userToken, "会话过期");
                 throw new UnAuthorizeException(ResponseStatusEnum.TICKET_INVALID.status(), "会话已过期,请重新登录");
             }
         }
+        log.debug("UserTokenInterceptor: id={} token={} state={}", userId, userToken, "认证成功");
         return true;
     }
 

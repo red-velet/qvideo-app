@@ -15,7 +15,6 @@ public enum ResponseStatusEnum {
 
     FAILED(500, false, "操作失败！"),
 
-    // 50x
     UN_LOGIN(501, false, "请登录后再继续操作！"),
 
     TICKET_INVALID(502, false, "会话失效，请重新登录！"),

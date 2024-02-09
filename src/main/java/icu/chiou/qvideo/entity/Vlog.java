@@ -1,9 +1,12 @@
 package icu.chiou.qvideo.entity;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -69,12 +72,14 @@ public class Vlog implements Serializable {
     /**
      * 创建时间 创建时间
      */
-    private LocalDateTime createdTime;
+    @TableField(fill = FieldFill.INSERT)
+    private Date createdTime;
 
     /**
      * 更新时间 更新时间
      */
-    private LocalDateTime updatedTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updatedTime;
 
 
 }

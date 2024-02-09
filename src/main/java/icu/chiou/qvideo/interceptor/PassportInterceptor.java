@@ -1,6 +1,6 @@
 package icu.chiou.qvideo.interceptor;
 
-import icu.chiou.qvideo.constants.BaseInfoProperties;
+import icu.chiou.qvideo.constants.RedisPrefix;
 import icu.chiou.qvideo.constants.ResponseStatusEnum;
 import icu.chiou.qvideo.exception.PassportException;
 import icu.chiou.qvideo.utils.IPUtil;
@@ -15,14 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
- *
+ * 通行证拦截器
  * </p>
  *
  * @author red-velvet
  * @since 2024/2/7
  */
 @Slf4j
-public class PassportInterceptor extends BaseInfoProperties implements HandlerInterceptor {
+public class PassportInterceptor implements HandlerInterceptor {
 
     @Autowired
     private RedisService redisService;
@@ -33,15 +33,14 @@ public class PassportInterceptor extends BaseInfoProperties implements HandlerIn
         //对获取验证码的ip进行限流
         // 获得用户的ip
         String userIp = IPUtil.getRequestIp(request);
-        log.debug("通行证拦截器:{} ", userIp);
 
         // 得到是否存在的判断
-        boolean flag = redisService.keyIsExist(LIMIT_IP + userIp);
+        boolean flag = redisService.keyIsExist(RedisPrefix.LIMIT_IP + userIp);
         if (flag) {
-            log.debug("通行证拦截器:{} ", "未通过-短信发送频繁");
+            log.debug("PassportInterceptor/请求验证码: ip={} {}", userIp, "短信发送太过频繁");
             throw new PassportException(ResponseStatusEnum.MOBILE_ERROR.status(), "短信发送太过频繁");
         }
-        log.debug("通行证拦截器:{} ", "放行");
+        log.debug("PassportInterceptor/请求验证码: ip={} {}", userIp, "放行");
         return true;
     }
 

@@ -1,5 +1,7 @@
 server:
   port: 8099
+  #address: 192.168.202.60
+  address: 127.0.0.1
 
 
 spring:

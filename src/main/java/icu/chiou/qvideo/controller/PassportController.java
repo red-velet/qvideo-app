@@ -1,6 +1,6 @@
 package icu.chiou.qvideo.controller;
 
-import icu.chiou.qvideo.constants.BaseInfoProperties;
+import icu.chiou.qvideo.constants.RedisPrefix;
 import icu.chiou.qvideo.constants.ResponseStatusEnum;
 import icu.chiou.qvideo.entity.RegisterLoginBO;
 import icu.chiou.qvideo.entity.User;
@@ -33,7 +33,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("passport")
-public class PassportController extends BaseInfoProperties {
+public class PassportController {
     @Autowired
     RedisService redisService;
 
@@ -55,12 +55,12 @@ public class PassportController extends BaseInfoProperties {
 
         String code = SMSUtils.generateVerification6Code();
         log.debug("发送验证码：{} --> {}", mobile, code);
-        redisService.set(CODE_MOBILE + mobile, code, FIVE_MINTERS);
+        redisService.set(RedisPrefix.CODE_MOBILE + mobile, code, RedisPrefix.FIVE_MINTERS);
 
         //防止重复发送,对用户ip进行限流
         String userIp = IPUtil.getRequestIp(request);
         //根据用户ip进行限制，限制用户在60秒之内只能获得一次验证码
-        redisService.set(LIMIT_IP + userIp, mobile, MINTERS);
+        redisService.set(RedisPrefix.LIMIT_IP + userIp, mobile, RedisPrefix.MINTER);
 
         return R.ok();
     }
@@ -74,7 +74,7 @@ public class PassportController extends BaseInfoProperties {
     @PostMapping("/login")
     public R login(@RequestBody @Validated RegisterLoginBO registerLoginBO) {
         //验证码校验
-        String code = redisService.get(CODE_MOBILE + registerLoginBO.getMobile());
+        String code = redisService.get(RedisPrefix.CODE_MOBILE + registerLoginBO.getMobile());
         if (!Objects.equals(code, registerLoginBO.getSmsCode())) {
             throw new PassportException(500, "验证码错误");
         }
@@ -88,10 +88,10 @@ public class PassportController extends BaseInfoProperties {
         BeanUtils.copyProperties(user, userVO);
         String token = UUID.randomUUID().toString();
         userVO.setUserToken(token);
-        redisService.set(TOKEN + user.getId(), token);
+        redisService.set(RedisPrefix.TOKEN + user.getId(), token);
 
         // 4. 用户登录注册成功以后，删除redis中的短信验证码
-        redisService.del(CODE_MOBILE + ":" + registerLoginBO.getMobile());
+        redisService.del(RedisPrefix.CODE_MOBILE + ":" + registerLoginBO.getMobile());
         return R.ok().msg("登陆成功").data(userVO);
     }
 
@@ -104,7 +104,7 @@ public class PassportController extends BaseInfoProperties {
     @PostMapping("/logout")
     public R logout(String userId) {
         //清除保存用户会话信息
-        redisService.del(TOKEN + userId);
+        redisService.del(RedisPrefix.TOKEN + userId);
         return R.ok().msg("登出成功");
     }
 }

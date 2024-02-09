@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * <p>
- * 通行证异常-异常处理器
+ * 统一异常处理 - 异常处理器
  * </p>
  *
  * @author red-velvet
